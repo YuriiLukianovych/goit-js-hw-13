@@ -7,7 +7,19 @@
       <title>Homework 12</title>
    </head>
    <body>
-      <input type="text" id="search-box" />
+      <header class="header">
+         <form class="search-form" id="search-form">
+            <input
+               id="search-box"
+               type="text"
+               name="searchQuery"
+               autocomplete="off"
+               placeholder="Search images..."
+            />
+            <button class="btn" type="submit">Search</button>
+         </form>
+      </header>
+      <!-- <input type="text" id="search-box" /> -->
       <ul class="country-list"></ul>
       <div class="country-info"></div>
 

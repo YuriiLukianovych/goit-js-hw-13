@@ -1,10 +1,10 @@
 import './css/styles.css';
 import { fetchCountries } from './js/fetchCountries';
 import { getCountriesList, getCountryCard } from './js/renderMarkup';
-import _debounce from 'lodash.debounce';
+import _throttle from 'lodash.throttle';
 import { Notify } from 'notiflix';
 
-const DEBOUNCE_DELAY = 300;
+const DEBOUNCE_DELAY = 3000;
 
 // получить ссылки на элементы DOM
 const refs = {
@@ -16,7 +16,7 @@ export { refs };
 
 refs.searchInput.addEventListener(
    'input',
-   _debounce(onInputChange, DEBOUNCE_DELAY),
+   _throttle(onInputChange, DEBOUNCE_DELAY),
 );
 
 function onInputChange(e) {
