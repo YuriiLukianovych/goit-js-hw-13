@@ -1,10 +1,10 @@
 import './css/styles.css';
-import { fetchImages } from './js/api-service';
+import PixabayApi from './js/api-service';
 import { renderImagesList } from './js/renderMarkup';
 import throttle from 'lodash.throttle';
 import { Notify } from 'notiflix';
 
-const THROTTLE_DELAY = 300;
+const THROTTLE_DELAY = 1000;
 
 // получить ссылки на элементы DOM
 const refs = {
@@ -12,31 +12,42 @@ const refs = {
    searchForm: document.querySelector('#search-form'),
    submitBtn: document.querySelector('.btn'),
    galleryBox: document.querySelector('.gallery'),
+   loadMoreBtn: document.querySelector('.load-more'),
 };
 
 refs.searchForm.addEventListener(
    'submit',
    throttle(onSubmitClick, THROTTLE_DELAY),
 );
+refs.loadMoreBtn.addEventListener(
+   'click',
+   throttle(onLoadMore, THROTTLE_DELAY),
+);
+
+const pixabayApi = new PixabayApi();
 
 function onSubmitClick(e) {
    e.preventDefault();
    const form = e.currentTarget;
-   const searchQuery = form.elements.searchQuery.value.toLowerCase().trim();
+   pixabayApi.query = form.elements.searchQuery.value.toLowerCase().trim();
 
-   if (searchQuery.length === 0) {
+   if (pixabayApi.query.length === 0) {
       clearList();
       return;
    }
-   fetchImages(searchQuery)
+   pixabayApi
+      .fetchImages()
       .then(imgs => {
          const { hits } = imgs;
          if (hits.length === 0) {
+            clearList();
             Notify.failure(
                'Sorry, there are no images matching your search query. Please try again.',
             );
+            return;
          }
          renderImagesList(hits);
+         refs.loadMoreBtn.style.display = 'inline-block';
       })
       .catch(error => {
          clearList();
@@ -45,7 +56,12 @@ function onSubmitClick(e) {
       .finally(() => form.reset());
 }
 
+function onLoadMore(e) {
+   pixabayApi.fetchImages();
+}
+
 function clearList() {
+   refs.loadMoreBtn.style.display = 'none';
    refs.galleryBox.innerHTML = '';
 }
 
