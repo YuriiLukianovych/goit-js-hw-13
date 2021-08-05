@@ -43,6 +43,7 @@ function onSubmitClick(e) {
          }
          clearList();
          renderImagesList(imgs.hits);
+         Notify.success(`Hooray! We found ${imgs.totalHits} images`);
          if (imgs.totalHits > pixabayApi.perPage) {
             refs.loadMoreBtn.style.display = 'inline-block';
          }
