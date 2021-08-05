@@ -59,13 +59,13 @@ function onLoadMore(e) {
    pixabayApi.fetchImages().then(imgs => {
       const isEnd =
          Math.ceil(imgs.totalHits / pixabayApi.perPage) === pixabayApi.page - 1;
-      console.log(isEnd);
-      console.log(pixabayApi.page - 1);
       if (isEnd) {
          refs.loadMoreBtn.style.display = 'none';
-         Notify.info(
-            "We're sorry, but you've reached the end of search results.",
-         );
+         setTimeout(() => {
+            Notify.info(
+               "We're sorry, but you've reached the end of search results.",
+            );
+         }, 2000);
       }
 
       renderImagesList(imgs.hits);
