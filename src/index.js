@@ -28,26 +28,24 @@ const pixabayApi = new PixabayApi();
 
 function onSubmitClick(e) {
    e.preventDefault();
-   clearList();
    const form = e.currentTarget;
-   pixabayApi.query = form.elements.searchQuery.value.toLowerCase().trim();
+   pixabayApi.query = form.elements.searchQuery.value;
    pixabayApi.resetPage();
-   // if (pixabayApi.query.length === 0) {
-   //    clearList();
-   //    return;
-   // }
    pixabayApi
       .fetchImages()
       .then(imgs => {
-         if (imgs.length === 0) {
+         if (imgs.hits.length === 0) {
             clearList();
             Notify.failure(
                'Sorry, there are no images matching your search query. Please try again.',
             );
             return;
          }
-         renderImagesList(imgs);
-         refs.loadMoreBtn.style.display = 'inline-block';
+         clearList();
+         renderImagesList(imgs.hits);
+         if (imgs.totalHits > pixabayApi.perPage) {
+            refs.loadMoreBtn.style.display = 'inline-block';
+         }
       })
       .catch(error => {
          clearList();
@@ -57,7 +55,20 @@ function onSubmitClick(e) {
 }
 
 function onLoadMore(e) {
-   pixabayApi.fetchImages().then(renderImagesList);
+   pixabayApi.fetchImages().then(imgs => {
+      const isEnd =
+         Math.ceil(imgs.totalHits / pixabayApi.perPage) === pixabayApi.page - 1;
+      console.log(isEnd);
+      console.log(pixabayApi.page - 1);
+      if (isEnd) {
+         refs.loadMoreBtn.style.display = 'none';
+         Notify.info(
+            "We're sorry, but you've reached the end of search results.",
+         );
+      }
+
+      renderImagesList(imgs.hits);
+   });
 }
 
 function clearList() {
