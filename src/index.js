@@ -39,6 +39,7 @@ async function onSubmitClick(e) {
    const images = await pixabayApi.fetchImages();
    if (images.hits.length === 0) {
       clearList();
+      form.reset();
       Notify.failure(
          'Sorry, there are no images matching your search query. Please try again.',
       );
