@@ -141,6 +141,7 @@ p {
    font-size: 18px;
    background-color: #627ec9;
    border: none;
+   outline: none;
    border: 2px solid inherit;
    margin-left: -10px;
    border-radius: 0 4px 4px 0;
