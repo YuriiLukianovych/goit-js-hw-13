@@ -11,21 +11,12 @@ export default class PixabayApi {
       const BASE_URL = 'https://pixabay.com/api/';
       const url = `${BASE_URL}?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${this.perPage}&page=${this.page}`;
 
-      const response = await fetch(url);
-      const imagesObj = await response.json();
+      // const response = await fetch(url);
+      const response = await axios.get(url);
+      // const imagesObj = await response.json();
+      const imagesObj = response.data;
       this.page += 1;
       return imagesObj;
-      // fetch(url)
-      //    .then(response => {
-      //       if (!response.ok) {
-      //          throw new Error(response.status);
-      //       }
-      //       return response.json();
-      //    })
-      //    .then(data => {
-      //       this.page += 1;
-      //       return data;
-      //    });
    }
    resetPage() {
       this.page = 1;
