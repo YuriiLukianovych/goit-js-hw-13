@@ -92,8 +92,8 @@ p {
 }
 
 .info {
-   height: 70px;
-   padding: 3px;
+   height: 60px;
+   padding: 5px;
    display: flex;
    justify-content: space-between;
 }

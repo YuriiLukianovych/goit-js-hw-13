@@ -28,25 +28,25 @@ const pixabayApi = new PixabayApi();
 
 function onSubmitClick(e) {
    e.preventDefault();
+   clearList();
    const form = e.currentTarget;
    pixabayApi.query = form.elements.searchQuery.value.toLowerCase().trim();
-
-   if (pixabayApi.query.length === 0) {
-      clearList();
-      return;
-   }
+   pixabayApi.resetPage();
+   // if (pixabayApi.query.length === 0) {
+   //    clearList();
+   //    return;
+   // }
    pixabayApi
       .fetchImages()
       .then(imgs => {
-         const { hits } = imgs;
-         if (hits.length === 0) {
+         if (imgs.length === 0) {
             clearList();
             Notify.failure(
                'Sorry, there are no images matching your search query. Please try again.',
             );
             return;
          }
-         renderImagesList(hits);
+         renderImagesList(imgs);
          refs.loadMoreBtn.style.display = 'inline-block';
       })
       .catch(error => {
@@ -57,7 +57,7 @@ function onSubmitClick(e) {
 }
 
 function onLoadMore(e) {
-   pixabayApi.fetchImages();
+   pixabayApi.fetchImages().then(renderImagesList);
 }
 
 function clearList() {
