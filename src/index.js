@@ -29,8 +29,12 @@ const pixabayApi = new PixabayApi();
 function onSubmitClick(e) {
    e.preventDefault();
    const form = e.currentTarget;
-   pixabayApi.query = form.elements.searchQuery.value;
+   pixabayApi.query = form.elements.searchQuery.value.trim();
    pixabayApi.resetPage();
+   if (pixabayApi.query === '') {
+      Notify.info('Enter your search term!');
+      return;
+   }
    pixabayApi
       .fetchImages()
       .then(imgs => {
