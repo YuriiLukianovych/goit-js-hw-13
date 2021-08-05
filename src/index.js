@@ -1,49 +1,52 @@
 import './css/styles.css';
-import { fetchCountries } from './js/fetchCountries';
-import { getCountriesList, getCountryCard } from './js/renderMarkup';
-import _throttle from 'lodash.throttle';
+import { fetchImages } from './js/api-service';
+import { renderImagesList } from './js/renderMarkup';
+import throttle from 'lodash.throttle';
 import { Notify } from 'notiflix';
 
-const DEBOUNCE_DELAY = 3000;
+const THROTTLE_DELAY = 300;
 
 // получить ссылки на элементы DOM
 const refs = {
    searchInput: document.querySelector('#search-box'),
-   countryList: document.querySelector('.country-list'),
-   countryInfoBlock: document.querySelector('.country-info'),
+   searchForm: document.querySelector('#search-form'),
+   submitBtn: document.querySelector('.btn'),
+   galleryBox: document.querySelector('.gallery'),
 };
-export { refs };
 
-refs.searchInput.addEventListener(
-   'input',
-   _throttle(onInputChange, DEBOUNCE_DELAY),
+refs.searchForm.addEventListener(
+   'submit',
+   throttle(onSubmitClick, THROTTLE_DELAY),
 );
 
-function onInputChange(e) {
-   const filter = e.target.value.toLowerCase().trim();
-   if (filter.length === 0) {
+function onSubmitClick(e) {
+   e.preventDefault();
+   const form = e.currentTarget;
+   const searchQuery = form.elements.searchQuery.value.toLowerCase().trim();
+
+   if (searchQuery.length === 0) {
+      clearList();
       return;
    }
-   fetchCountries(filter)
-      .then(countries => {
-         if (countries.length > 10) {
-            clearList();
-            Notify.info(
-               'Too many matches found. Please enter a more specific name.',
+   fetchImages(searchQuery)
+      .then(imgs => {
+         const { hits } = imgs;
+         if (hits.length === 0) {
+            Notify.failure(
+               'Sorry, there are no images matching your search query. Please try again.',
             );
-         } else if (countries.length === 1) {
-            getCountryCard(countries);
-         } else {
-            getCountriesList(countries);
          }
+         renderImagesList(hits);
       })
-      .catch(() => {
+      .catch(error => {
          clearList();
-         Notify.failure('Oops, there is no country with that name');
-      });
+         Notify.failure(error.message);
+      })
+      .finally(() => form.reset());
 }
 
 function clearList() {
-   refs.countryList.innerHTML = '';
-   refs.countryInfoBlock.innerHTML = '';
+   refs.galleryBox.innerHTML = '';
 }
+
+export { refs, clearList };

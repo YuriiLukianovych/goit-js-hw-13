@@ -1,18 +1,10 @@
-import countriesListTpl from '../templates/list-template.hbs';
-import countryCardTpl from '../templates/country-card-template.hbs';
-import { refs } from '../index';
+import CardTpl from '../templates/card-template.hbs';
+import { refs, clearList } from '../index';
 
-function getCountriesList(resp) {
-   refs.countryList.innerHTML = '';
-   refs.countryInfoBlock.innerHTML = '';
-   const markup = countriesListTpl(resp);
-   refs.countryList.innerHTML = markup;
-}
-function getCountryCard(resp) {
-   refs.countryList.innerHTML = '';
-   refs.countryInfoBlock.innerHTML = '';
-   const markup = countryCardTpl(resp);
-   refs.countryInfoBlock.innerHTML = markup;
+function renderImagesList(arr) {
+   clearList();
+   const markup = arr.map(CardTpl).join('');
+   refs.galleryBox.innerHTML = markup;
 }
 
-export { getCountriesList, getCountryCard };
+export { renderImagesList };
